@@ -1,33 +1,36 @@
-from typing import Any
-
 import requests
 from loguru import logger
 from telebot import TeleBot
 from telebot.types import Message
 
 from app.config import SECRET_TOKEN
+from app.resurses.const.strings import JOKE
+from app.resurses.messages.common import HELLO, HELP
 
 bot = TeleBot(SECRET_TOKEN)
 
+GET_JOKE_API_URL = "http://api.icndb.com/jokes/random"
+
 
 @bot.message_handler(commands=["start"])
-def start_message(message: Message) -> Any:
-    bot.send_message(message.chat.id, "Hello, i'm Viki")
+def start_message(message: Message) -> None:
+    bot.send_message(message.chat.id, HELLO)
 
 
 @bot.message_handler(commands=["help"])
-def help_message(message: Message) -> Any:
-    bot.send_message(message.chat.id, "you can say me: \nhello \njoke")
+def help_message(message: Message) -> None:
+    bot.send_message(message.chat.id, HELP)
 
 
 @bot.message_handler(content_types=["text"])
-def send_message(message: Message) -> Any:
-    logger.debug(message.from_user.username)
-    logger.debug(message.text)
-    if message.text.lower() == "joke":
-        resp = requests.get("http://api.icndb.com/jokes/random")
-        return bot.send_message(message.chat.id, resp.json()["value"]["joke"])
-    return bot.send_message(message.chat.id, message.text)
+def send_message(message: Message) -> None:
+    logger.debug(f"from: {message.from_user.username}")
+    logger.debug(f"text: {message.text}")
+    if message.text.lower() == JOKE:
+        resp = requests.get(GET_JOKE_API_URL)
+        bot.send_message(message.chat.id, resp.json()["value"]["joke"])
+    else:
+        bot.send_message(message.chat.id, message.text)
 
 
 bot.polling()
