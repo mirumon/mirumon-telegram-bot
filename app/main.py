@@ -1,11 +1,11 @@
 import requests
 from loguru import logger
+from telebot import TeleBot
+from telebot.types import Message
 
 from app.config import SECRET_TOKEN
 from app.resources.const.strings import JOKE
 from app.resources.messages.common import HELLO, HELP
-from telebot import TeleBot
-from telebot.types import Message
 
 bot = TeleBot(SECRET_TOKEN)
 
