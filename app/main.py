@@ -5,7 +5,7 @@ from telebot.types import Message
 
 from app.config import SECRET_TOKEN
 from app.resources.const.strings import JOKE
-from app.resurses.messages.common import HELLO, HELP
+from app.resources.messages.common import HELLO, HELP
 
 bot = TeleBot(SECRET_TOKEN)
 
