@@ -1,12 +1,16 @@
 [tool.poetry]
-name = "telegram-bot"
+name = "mirumon-tg-bot"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Telegram bot for mirumon monitoring service"
+authors = ["Opti213 <opti213@mail.ru>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
 pyTelegramBotAPI = "^3.6"
+fastapi = "^0.42.0"
+loguru = "^0.3.2"
+uvicorn = "^0.9.0"
+
 
 [tool.poetry.dev-dependencies]
 
