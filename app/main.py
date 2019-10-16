@@ -1,17 +1,11 @@
-import typing
-
 import requests
 from loguru import logger
 from telebot import TeleBot
 from telebot.types import Message
 
 from app.config import API_BASE_URL, SECRET_TOKEN
-from app.resources.const.strings import JOKE
 from app.resources.messages.common import HELLO, HELP
 from app.schemas.response_models import Computer
-
-typing.cast(str, API_BASE_URL)
-typing.cast(str, SECRET_TOKEN)
 
 bot = TeleBot(SECRET_TOKEN)
 
@@ -30,7 +24,7 @@ def help_message(message: Message) -> None:
 
 @bot.message_handler(commands=["computers"])
 def get_computers(message: Message) -> None:
-    resp = requests.get(str(API_BASE_URL) + "/computers")
+    resp = requests.get(API_BASE_URL + "/computers")
     if resp.status_code != requests.codes.ok:
         logger.error(resp.status_code)
         bot.send_message(message.chat.id, "not ok response")
@@ -45,16 +39,14 @@ def get_computers(message: Message) -> None:
         msg += f"{computer.name} [{computer.username}]\n"
     bot.send_message(message.chat.id, msg)
 
+    resp = requests.get(GET_JOKE_API_URL)
+    bot.send_message(message.chat.id, resp.json()["value"]["joke"])
 
-@bot.message_handler(content_types=["text"])
-def send_message(message: Message) -> None:
-    logger.debug(f"from: {message.from_user.username}")
-    logger.debug(f"text: {message.text}")
-    if message.text.lower() == JOKE:
-        resp = requests.get(GET_JOKE_API_URL)
-        bot.send_message(message.chat.id, resp.json()["value"]["joke"])
-    else:
-        bot.send_message(message.chat.id, message.text)
+
+@bot.message_handler(commands=["joke"])
+def joke(message: Message) -> None:
+    resp = requests.get(GET_JOKE_API_URL)
+    bot.send_message(message.chat.id, resp.json()["value"]["joke"])
 
 
 bot.polling()
