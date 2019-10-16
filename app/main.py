@@ -1,12 +1,17 @@
+import typing
+
 import requests
 from loguru import logger
 from telebot import TeleBot
 from telebot.types import Message
 
-from app.config import SECRET_TOKEN, API_BASE_URL
+from app.config import API_BASE_URL, SECRET_TOKEN
 from app.resources.const.strings import JOKE
 from app.resources.messages.common import HELLO, HELP
 from app.schemas.response_models import Computer
+
+typing.cast(str, API_BASE_URL)
+typing.cast(str, SECRET_TOKEN)
 
 bot = TeleBot(SECRET_TOKEN)
 
@@ -25,18 +30,20 @@ def help_message(message: Message) -> None:
 
 @bot.message_handler(commands=["computers"])
 def get_computers(message: Message) -> None:
-    resp = requests.get(API_BASE_URL + "/computers")
-    if not resp.status_code == 200:
+    resp = requests.get(str(API_BASE_URL) + "/computers")
+    if resp.status_code != requests.codes.ok:
         logger.error(resp.status_code)
+        bot.send_message(message.chat.id, "not ok response")
         return
     computers = [Computer(**computer) for computer in resp.json()]
+    computers.sort(key=lambda cmp: cmp.domain)
+    msg = ""
     for computer in computers:
-        bot.send_message(message.chat.id,
-                         "\n".join([
-                             f"In domain '{computer.domain}'",
-                             f"{computer.name} [{computer.username}]"
-                         ])
-                         )
+        tmp_domain = ""
+        if computer.domain != tmp_domain:
+            msg += f"\n In domain {computer.domain}\n\n"
+        msg += f"{computer.name} [{computer.username}]\n"
+    bot.send_message(message.chat.id, msg)
 
 
 @bot.message_handler(content_types=["text"])
