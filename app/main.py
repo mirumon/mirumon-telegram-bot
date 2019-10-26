@@ -1,12 +1,9 @@
 import requests
-from loguru import logger
 from telebot import TeleBot
 from telebot.types import Message
-from typing import List
 
-from app.config import API_BASE_URL, SECRET_TOKEN
+from app.config import SECRET_TOKEN
 from app.resources.messages.common import HELLO, HELP
-from app.schemas.response_models import Computer
 from app.services.requests import get_all_computers
 
 bot = TeleBot(SECRET_TOKEN)
