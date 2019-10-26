@@ -5,8 +5,7 @@ from telebot.types import Message
 
 import app.resources.messages as messages
 from app.config import SECRET_TOKEN
-from app.services.requests import get_all_computers
-from app.services.requests import get_software
+from app.services.requests import get_all_computers, get_software
 
 bot = TeleBot(SECRET_TOKEN)
 
@@ -25,7 +24,7 @@ def help_message(message: Message) -> None:
 
 @bot.message_handler(commands=["computers"])
 def get_computers(message: Message) -> None:
-    computers = await get_all_computers()
+    computers = get_all_computers()
     msg = ""
     for computer in computers:
         tmp_domain = ""
@@ -38,15 +37,17 @@ def get_computers(message: Message) -> None:
 @bot.message_handler(commands=["software"])
 def get_software(message: Message) -> None:
     mac_address = get_args(message)[0]
-    software = await get_software(mac_address)
+    software = get_software(mac_address)
     msg = "no one"
     for programme in software:
-        msg = "\n".join([
-            f"name: {programme.name}",
-            f"vendor: {programme.vendor}",
-            f"version: {programme.version}",
-            ""
-        ])
+        msg = "\n".join(
+            [
+                f"name: {programme.name}",
+                f"vendor: {programme.vendor}",
+                f"version: {programme.version}",
+                "",
+            ]
+        )
     bot.send_message(message.chat.id, msg)
 
 
