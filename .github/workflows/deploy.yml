@@ -64,8 +64,6 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
           ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" $SSH_USER@$SSH_HOST "
             docker pull $IMAGE_NAME:$TAG && \
             (docker rm -f mirumon_telegram_bot || true) && \
@@ -73,4 +71,7 @@ jobs:
               --name mirumon_telegram_bot \
               --network web \
               --restart always \
+              -e TG_APP_ID="$TG_APP_ID" \
+              -e TG_HASH="$TG_HASH" \
+              -e TG_BOT_TOKEN="$TG_BOT_TOKEN" \
               $IMAGE_NAME:$TAG"
