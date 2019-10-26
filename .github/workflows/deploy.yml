@@ -1,0 +1,77 @@
+name: Deploy
+
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  build:
+    name: BuildImage
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry config settings.virtualenvs.create false
+          poetry install --no-dev
+      - name: Verify that tag is the same as in application and available in docker registry
+        env:
+          IMAGE_NAME: mirumon/mirumon-telegram-bot
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          TAG=$(echo $GITHUB_REF | sed -e 's,.*/\(.*\),\1,')
+          APP_VERSION=$(awk -F"=" '/^version/ {gsub(/"/, "", $2); print $2}' pyproject.toml | sed 's/ //g')
+          test $APP_VERSION = $TAG
+          ./scripts/check-container-version $IMAGE_NAME:$TAG
+      - name: Build image and publish to registry
+        env:
+          IMAGE_NAME: mirumon/mirumon-telegram-bot
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          TAG=$(echo $GITHUB_REF | sed -e 's,.*/\(.*\),\1,')
+          docker build -t $IMAGE_NAME:$TAG -t $IMAGE_NAME:latest .
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+          docker push $IMAGE_NAME:$TAG
+          docker push $IMAGE_NAME:latest
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-18.04
+    needs: build
+    steps:
+      - uses: actions/checkout@master
+      - name: Deploy service with traefik over ssh
+        env:
+          IMAGE_NAME: mirumon/mirumon-telegram-bot
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          TG_APP_ID: ${{ secrets.TG_APP_ID }}
+          TG_HASH: ${{ secrets.TG_HASH }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+        run: |
+          TAG=$(echo $GITHUB_REF | sed -e 's,.*/\(.*\),\1,')
+          which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+          eval $(ssh-agent -s)
+          echo "add ssh key"
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" $SSH_USER@$SSH_HOST "
+            docker pull $IMAGE_NAME:$TAG && \
+            (docker rm -f mirumon_telegram_bot || true) && \
+            docker run -d \
+              --name mirumon_telegram_bot \
+              --network web \
+              --restart always \
+              -e TG_APP_ID="$TG_APP_ID" \
+              -e TG_HASH="$TG_HASH" \
+              -e TG_BOT_TOKEN="$TG_BOT_TOKEN" \
+              $IMAGE_NAME:$TAG"
