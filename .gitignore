@@ -109,3 +109,4 @@ venv.bak/
 #my tmp
 test.py
 test.session
+.env

@@ -4,17 +4,11 @@ from telebot import TeleBot
 from telebot.types import Message
 
 import app.resources.messages as messages
-from app.config import SECRET_TOKEN
+from app.config import config
 from app.services.requests import get_all_computers, get_software
+from app.services.utility import get_args
 
-bot = TeleBot(SECRET_TOKEN)
-
-GET_JOKE_API_URL = "http://api.icndb.com/jokes/random"
-
-
-@bot.message_handler(commands=["start"])
-def start_message(message: Message) -> None:
-    bot.send_message(message.chat.id, messages.HELLO)
+bot = TeleBot(config.tg_bot_token)
 
 
 @bot.message_handler(commands=["help"])
@@ -38,21 +32,8 @@ def get_computers(message: Message) -> None:
 def get_software(message: Message) -> None:
     mac_address = get_args(message)[0]
     software = get_software(mac_address)
-    msg = "no one"
-    for programme in software:
-        msg = "\n".join(
-            [
-                f"name: {programme.name}",
-                f"vendor: {programme.vendor}",
-                f"version: {programme.version}",
-                "",
-            ]
-        )
+    msg = messages.SOFTWARE_TEMPLATE.render(software=software) if software else "no one"
     bot.send_message(message.chat.id, msg)
-
-
-def get_args(message: Message) -> List[str]:
-    return message.text.split()[1:]
 
 
 bot.polling()
