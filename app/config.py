@@ -1,7 +1,6 @@
 import os
 
-from pydantic import BaseSettings, BaseConfig, SecretStr
-from pydantic.fields import Field
+from pydantic import BaseSettings, SecretStr
 
 TG_API_ID = str(os.getenv("TG_API_ID"))
 TG_API_HASH = str(os.getenv("TG_API_HASH"))

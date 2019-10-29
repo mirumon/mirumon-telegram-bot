@@ -1,5 +1,3 @@
-from typing import List
-
 from telebot import TeleBot
 from telebot.types import Message
 
@@ -8,7 +6,7 @@ from app.config import config
 from app.services.requests import get_all_computers, get_software
 from app.services.utility import get_args
 
-bot = TeleBot(config.tg_bot_token)
+bot = TeleBot(config.tg_bot_token.get_secret_value())
 
 
 @bot.message_handler(commands=["help"])
