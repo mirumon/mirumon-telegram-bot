@@ -4,7 +4,7 @@ from telebot.types import Message
 
 from app.config import config
 from app.resources import messages
-from app.services.requests import get_all_computers, get_software
+from app.services.requests import get_all_computers, get_software, BadResponse
 from app.services.utility import get_args, get_string_io_with_software
 
 bot = TeleBot(config.tg_bot_token.get_secret_value())
@@ -17,7 +17,11 @@ def help_message(message: Message) -> None:
 
 @bot.message_handler(commands=["computers"])
 def computers_handler(message: Message) -> None:
-    computers = get_all_computers()
+    try:
+        computers = get_all_computers()
+    except BadResponse as e:
+        bot.reply_to(message, f"bad response ({e.status_code})")
+        return
     logger.info(computers)
     msg = messages.INFO_TEMPLATE.render(computers=computers)
     bot.send_message(message.chat.id, msg)
@@ -30,7 +34,11 @@ def software_handler(message: Message) -> None:
     except ValueError:
         bot.reply_to(message, "wrong arguments")
         return
-    software = get_software(mac_address)
+    try:
+        software = get_software(mac_address)
+    except BadResponse as e:
+        bot.reply_to(message, f"bad response ({e.status_code})")
+        return
     if not software:
         bot.reply_to(message, "no one")
         return

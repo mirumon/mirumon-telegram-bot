@@ -107,6 +107,6 @@ venv.bak/
 .idea
 
 #my tmp
-test.py
+tmp.py
 test.session
 .env
