@@ -9,7 +9,7 @@ TG_BOT_TOKEN = str(os.getenv("TG_BOT_TOKEN"))
 API_BASE_URL = str(os.getenv("API_BASE_URL"))
 
 
-class Config(BaseSettings):
+class Settings(BaseSettings):
     tg_api_id: SecretStr
     tg_api_hash: SecretStr
     tg_bot_token: SecretStr
@@ -19,4 +19,4 @@ class Config(BaseSettings):
         case_sensitive = False
 
 
-config = Config()
+config = Settings()
