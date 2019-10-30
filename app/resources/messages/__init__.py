@@ -1,27 +1,13 @@
-from mako.template import Template
+from mako.lookup import TemplateLookup
 
 HELLO = "Hello, i'm Viki"
 HELP = "you can say me: \nhello \njoke"
 JOKE = "joke"
 
-SOFTWARE_TEMPLATE = Template(
-    """
-    % for programme in software:
-        name: {programme.name}
-        vendor: {programme.vendor}
-        version: {programme.version}
-    % endfor
-    """
+_TEMPLATE_LOOKUP = TemplateLookup(
+    directories=["app/resources/messages"], input_encoding="utf-8"
 )
 
-INFO_TEMPLATE = Template(
-    """
-    % for computer in computers:
-            <% tmp domain = "" %>
-            % if computer.domain != tmp_domain:
-                \n In domain {computer.domain}\n\n
-            % endif
-            {computer.name} [{computer.username}] <{computer.mac_address}>\n
-    % endfor
-    """
-)
+SOFTWARE_TEMPLATE = _TEMPLATE_LOOKUP.get_template("programs.txt")
+
+INFO_TEMPLATE = _TEMPLATE_LOOKUP.get_template("./computers.txt")

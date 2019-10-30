@@ -1,0 +1,8 @@
+% for computer in computers:
+    <% tmp_domain = "" %>
+    % if computer.domain != tmp_domain:
+        *In domain ${computer.domain}*
+        <% tmp_domain = computer.domain %>
+    % endif
+    ${computer.name} [${computer.username}] <${computer.mac_address}>
+% endfor

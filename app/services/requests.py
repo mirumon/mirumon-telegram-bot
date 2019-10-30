@@ -1,6 +1,7 @@
 from typing import List
 
-import requests
+import httpx
+from httpx.status_codes import StatusCode
 from loguru import logger
 
 from app.config import config
@@ -8,8 +9,10 @@ from app.schemas.response_models import Computer, Software
 
 
 def get_all_computers() -> List[Computer]:
-    resp = requests.get(config.api_base_url + "/computers")
-    if resp.status_code != requests.codes.ok:
+    resp = httpx.get(f"{config.api_base_url}/computers")
+    is_server_error = StatusCode.is_server_error(resp.status_code)
+    is_client_error = StatusCode.is_client_error(resp.status_code)
+    if is_client_error or is_server_error:
         logger.error(resp.status_code)
         return []
     computers = [Computer(**computer) for computer in resp.json()]
@@ -18,10 +21,10 @@ def get_all_computers() -> List[Computer]:
 
 
 def get_software(mac_adres: str) -> List[Software]:
-    resp = requests.get(
-        config.api_base_url + f"/computers/{mac_adres}/installed-programs"
-    )
-    if resp.status_code != requests.codes.ok:
+    resp = httpx.get(f"{config.api_base_url}/computers/{mac_adres}/installed-programs")
+    is_server_error = StatusCode.is_server_error(resp.status_code)
+    is_client_error = StatusCode.is_client_error(resp.status_code)
+    if is_client_error or is_server_error:
         logger.error(resp.status_code)
         return []
     return [Software(**software) for software in resp.json()]

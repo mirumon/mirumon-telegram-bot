@@ -1,0 +1,5 @@
+% for programme in software:
+    name: {programme.name}
+    vendor: {programme.vendor}
+    version: {programme.version}
+% endfor
