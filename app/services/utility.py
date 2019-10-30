@@ -1,4 +1,4 @@
-import csv
+import io
 from typing import List
 
 from telebot.types import Message
@@ -12,8 +12,6 @@ def get_args(message: Message) -> List[str]:
     raise ValueError
 
 
-def save_software_file(software: List[Software]) -> None:
-    with open("programs.csv", "w", newline="") as csv_file:
-        writer = csv.writer(csv_file, delimiter=",")
-        for soft in software:
-            writer.writerow([soft.name, soft.vendor, soft.version])
+def get_string_io_with_software(software: List[Software]) -> io.StringIO:
+    msg = "\n".join([f"{soft.name},{soft.vendor},{soft.version}" for soft in software])
+    return io.StringIO(msg)

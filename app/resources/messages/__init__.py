@@ -1,7 +1,12 @@
 from mako.lookup import TemplateLookup
 
-HELLO = "Hello, i'm Viki"
-HELP = "you can say me: \nhello \njoke"
+HELP = "\n".join(
+    [
+        "\\computers for show all computers",
+        "\\software {mac_address} for get csv file with all software",
+    ]
+)
+HELLO = f"Hello, i'm mirumon bot.\n {HELP}"
 JOKE = "joke"
 
 _TEMPLATE_LOOKUP = TemplateLookup(
