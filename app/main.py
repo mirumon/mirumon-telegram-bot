@@ -7,7 +7,6 @@ from app.resources.messages import INFO_TEMPLATE
 from app.services.requests import get_all_computers, get_software
 from app.services.utility import get_args
 
-
 bot = TeleBot(config.tg_bot_token.get_secret_value())
 
 
@@ -29,7 +28,6 @@ def software_handler(message: Message) -> None:
     software = get_software(mac_address)
     msg = messages.SOFTWARE_TEMPLATE.render(software=software) if software else "no one"
     bot.send_message(message.chat.id, msg)
-
 
 
 bot.polling()
