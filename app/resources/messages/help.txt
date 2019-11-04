@@ -1,0 +1,2 @@
+\computers for show all computers
+\software {mac_address} for get csv file with all software

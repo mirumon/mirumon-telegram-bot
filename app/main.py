@@ -1,4 +1,3 @@
-from loguru import logger
 from telebot import TeleBot
 from telebot.types import Message
 
@@ -22,7 +21,6 @@ def computers_handler(message: Message) -> None:
     except BadResponse as exc:
         bot.reply_to(message, f"bad response ({exc.status_code})")
         return
-    logger.debug(f"computers: {computers}")
     msg = messages.INFO_TEMPLATE.render(computers=computers)
     bot.send_message(message.chat.id, msg)
 
@@ -32,19 +30,17 @@ def software_handler(message: Message) -> None:
     try:
         mac_address = get_args(message)[0]
     except ValueError:
-        bot.reply_to(message, "wrong arguments, please enter /software {mac_address}")
+        bot.reply_to(message, messages.WRONG_ARGUMENTS)
         return
     try:
         software = get_software(mac_address)
     except BadResponse as exc:
-        logger.error(f"response status code:{exc.status_code}")
-        bot.reply_to(message, f"the service is not responding")
+        bot.reply_to(message, messages.NOT_RESPONDING)
         return
     if not software:
-        bot.reply_to(message, "no one")
+        bot.reply_to(message, messages.NO_ONE)
         return
 
-    logger.debug(f"soft {len(software)}, first : {software[0]}")
     csv_file = get_string_io_with_software(software)
     with open(csv_file.read(), "rb") as sending_csv_file:
         bot.send_document(message.chat.id, sending_csv_file)
