@@ -12,6 +12,6 @@ def get_args(message: Message) -> List[str]:
     raise ValueError
 
 
-def get_string_io_with_software(software: List[Software]) -> io.StringIO:
+def get_file_as_csv(software: List[Software]) -> io.StringIO:
     msg = "\n".join([f"{soft.name},{soft.vendor},{soft.version}" for soft in software])
     return io.StringIO(msg)
