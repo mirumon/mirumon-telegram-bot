@@ -1,6 +1,7 @@
 from telebot import TeleBot
 from telebot.types import Message
 
+from app import resources
 from app.config import config
 from app.resources import messages
 from app.services.excel import get_excel_file
@@ -42,7 +43,7 @@ def software_handler(message: Message) -> None:
         bot.reply_to(message, messages.NO_ONE)
         return
 
-    document = get_excel_file(software, config.FILE_WITH_PROGRAMS_NAME)
+    document = get_excel_file(software, resources.FILE_WITH_PROGRAMS_NAME)
     bot.send_document(message.chat.id, document)
 
 

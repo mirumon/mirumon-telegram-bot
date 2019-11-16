@@ -1,10 +1,14 @@
 from typing import List
 
+import httpx
 from httpx import StatusCode
 from loguru import logger
 
-from app.resources import http_client
+from app.config import config
 from app.schemas.mirumon_responses import Computer, Software
+
+TIMEOUT = 15
+_http_client = httpx.Client(base_url=config.api_base_url, timeout=TIMEOUT)
 
 
 class BadResponse(Exception):
@@ -13,7 +17,7 @@ class BadResponse(Exception):
 
 
 def get_all_computers() -> List[Computer]:
-    resp = http_client.get("/computers")
+    resp = _http_client.get("/computers")
     if is_error(resp.status_code):
         logger.error(resp.status_code)
         raise BadResponse(resp.status_code)
@@ -23,7 +27,7 @@ def get_all_computers() -> List[Computer]:
 
 
 def get_software(mac_address: str) -> List[Software]:
-    resp = http_client.get(f"/computers/{mac_address}/installed-programs")
+    resp = _http_client.get(f"/computers/{mac_address}/installed-programs")
     if is_error(resp.status_code):
         logger.error(resp.status_code)
         raise BadResponse(resp.status_code)
