@@ -3,8 +3,9 @@ from telebot.types import Message
 
 from app.config import config
 from app.resources import messages
+from app.services.excel import get_excel_file
 from app.services.requests import BadResponse, get_all_computers, get_software
-from app.services.utility import get_args, get_file_as_csv
+from app.services.utility import get_args
 
 bot = TeleBot(config.tg_bot_token.get_secret_value())
 
@@ -41,9 +42,8 @@ def software_handler(message: Message) -> None:
         bot.reply_to(message, messages.NO_ONE)
         return
 
-    csv_file = get_file_as_csv(software)
-    with open(csv_file.read(), "rb") as sending_csv_file:
-        bot.send_document(message.chat.id, sending_csv_file)
+    document = get_excel_file(software, config.FILE_WITH_PROGRAMS_NAME)
+    bot.send_document(message.chat.id, document)
 
 
 bot.polling()

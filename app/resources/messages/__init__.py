@@ -10,6 +10,7 @@ SOFTWARE_TEMPLATE = _TEMPLATE_LOOKUP.get_template("programs.txt")
 
 INFO_TEMPLATE = _TEMPLATE_LOOKUP.get_template("computers.txt")
 
+
 WRONG_ARGUMENTS = "wrong arguments, please enter /software {mac_address}"
 
 NOT_RESPONDING = "the service is not responding"

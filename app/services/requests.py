@@ -1,12 +1,10 @@
 from typing import List
 
-import httpx
 from httpx import StatusCode
 from loguru import logger
 
-from app.config import config
-from app.schemas.response_models import Computer, Software
 from app.resources import http_client
+from app.schemas.mirumon_responses import Computer, Software
 
 
 class BadResponse(Exception):
