@@ -1,5 +1,5 @@
 % for program in software:
-    name: {program.name}
-    vendor: {program.vendor}
-    version: {program.version}
+name: {program.name}
+vendor: {program.vendor}
+version: {program.version}
 % endfor
