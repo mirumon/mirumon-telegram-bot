@@ -5,7 +5,7 @@ from app import resources
 from app.config import config
 from app.resources import messages
 from app.services.excel import get_excel_file
-from app.services.requests import BadResponse, get_all_computers, get_software
+from app.services.mirumon_api import BadResponse, get_all_computers, get_software
 from app.services.utility import get_args
 
 bot = TeleBot(config.tg_bot_token.get_secret_value())
