@@ -74,5 +74,6 @@ jobs:
               --restart always \
               -e TG_APP_ID="$TG_APP_ID" \
               -e TG_HASH="$TG_HASH" \
+              -e API_BASE_URL="$API_BASE_URL" \
               -e TG_BOT_TOKEN="$TG_BOT_TOKEN" \
               $IMAGE_NAME:$TAG"
