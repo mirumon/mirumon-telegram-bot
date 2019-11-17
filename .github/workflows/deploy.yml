@@ -54,6 +54,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           TG_APP_ID: ${{ secrets.TG_APP_ID }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
           TG_HASH: ${{ secrets.TG_HASH }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
         run: |
