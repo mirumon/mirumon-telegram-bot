@@ -7,7 +7,7 @@ from loguru import logger
 from app.config import config
 from app.schemas.mirumon_responses import Computer, Software
 
-TIMEOUT = 15
+TIMEOUT = 25
 _http_client = httpx.Client(base_url=config.api_base_url, timeout=TIMEOUT)
 
 
