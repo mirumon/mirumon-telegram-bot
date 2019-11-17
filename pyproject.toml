@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mirumon-tg-bot"
-version = "0.0.3"
+version = "0.0.4"
 description = "Telegram bot for mirumon monitoring service"
 authors = ["Opti213 <opti213@mail.ru>"]
 
